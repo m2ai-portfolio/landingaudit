@@ -4,6 +4,8 @@ import os
 import sys
 from landingflow_audit.core.crawler import PageCrawler
 from landingflow_audit.core.navigator import NavigationAnalyzer
+from landingflow_audit.core.reporter import ReportGenerator
+from landingflow_audit.data.models import AuditResult
 
 
 def main():
@@ -50,14 +52,50 @@ def main():
     # Step 2: Analyze navigation flow
     print("Step 2: Analyzing navigation flow...")
     analyzer = NavigationAnalyzer(min_confidence)
-    issues = analyzer.analyze(crawl_data)
-    print(f"Navigation issues found: {len(issues)}")
-    for issue in issues:
+    nav_issues = analyzer.analyze(crawl_data)
+    print(f"Navigation issues found: {len(nav_issues)}")
+    for issue in nav_issues:
         print(f"  [{issue.severity}/10] {issue.issue_type}: {issue.description}")
     print()
 
-    # Future: Initialize ReportGenerator
-    # Future: Execute report generation workflow
+    # Step 3: Conversion analysis
+    reporter = ReportGenerator(output_dir)
+    print("Step 3: Analyzing conversion issues...")
+    conversion_issues = reporter.analyze_conversion_issues(crawl_data)
+    print(f"Conversion issues found: {len(conversion_issues)}")
+    for issue in conversion_issues:
+        print(f"  [{issue.severity}/10] {issue.issue_type}: {issue.description}")
+    print()
+
+    # Combine all issues
+    all_issues = nav_issues + conversion_issues
+
+    # Create AuditResult
+    result = AuditResult(
+        audited_pages=crawl_data['pages'],
+        issues=all_issues,
+        summary={
+            "total_pages": len(crawl_data['pages']),
+            "total_issues": len(all_issues),
+            "critical_issues": len([i for i in all_issues if i.severity >= 7]),
+            "navigation_issues": len(nav_issues),
+            "conversion_issues": len(conversion_issues)
+        }
+    )
+
+    # Step 4: Generate reports
+    print("Step 4: Generating reports...")
+    reporter.generate(result)
+    print(f"Reports saved to: {output_dir}")
+    print(f"  - audit_report.csv")
+    print(f"  - audit_report.json")
+    print()
+
+    # Summary
+    print(f"=== Audit Summary ===")
+    print(f"Pages audited: {result.summary['total_pages']}")
+    print(f"Total issues: {result.summary['total_issues']}")
+    print(f"Critical issues: {result.summary['critical_issues']}")
 
     sys.exit(0)
 
