@@ -2,6 +2,7 @@
 
 import os
 import sys
+from landingflow_audit.core.crawler import PageCrawler
 
 
 def main():
@@ -24,10 +25,29 @@ def main():
     print(f"Data directory: {data_dir}")
     print(f"Output directory: {output_dir}")
     print(f"Minimum confidence: {min_confidence}")
+    print()
 
-    # Stub implementation - actual workflow to be implemented in future iterations
-    # Future: Initialize PageCrawler, NavigationAnalyzer, and ReportGenerator
-    # Future: Execute crawl -> analyze -> report workflow
+    # Initialize PageCrawler and crawl the data directory
+    print("Step 1: Crawling landing pages...")
+    crawler = PageCrawler(data_dir)
+    crawl_data = crawler.crawl()
+
+    # Display crawl results
+    print(f"Pages discovered: {len(crawl_data['pages'])}")
+    print(f"Anchors found: {len(crawl_data['anchors'])}")
+    print(f"Forms found: {len(crawl_data['forms'])}")
+    print(f"CTAs found: {len(crawl_data['ctas'])}")
+    print()
+
+    # Show details if data was found
+    if crawl_data['pages']:
+        print("Discovered pages:")
+        for page in crawl_data['pages']:
+            print(f"  - {page}")
+        print()
+
+    # Future: Initialize NavigationAnalyzer and ReportGenerator
+    # Future: Execute analyze -> report workflow
 
     sys.exit(0)
 
