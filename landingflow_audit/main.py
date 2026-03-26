@@ -3,6 +3,7 @@
 import os
 import sys
 from landingflow_audit.core.crawler import PageCrawler
+from landingflow_audit.core.navigator import NavigationAnalyzer
 
 
 def main():
@@ -46,8 +47,17 @@ def main():
             print(f"  - {page}")
         print()
 
-    # Future: Initialize NavigationAnalyzer and ReportGenerator
-    # Future: Execute analyze -> report workflow
+    # Step 2: Analyze navigation flow
+    print("Step 2: Analyzing navigation flow...")
+    analyzer = NavigationAnalyzer(min_confidence)
+    issues = analyzer.analyze(crawl_data)
+    print(f"Navigation issues found: {len(issues)}")
+    for issue in issues:
+        print(f"  [{issue.severity}/10] {issue.issue_type}: {issue.description}")
+    print()
+
+    # Future: Initialize ReportGenerator
+    # Future: Execute report generation workflow
 
     sys.exit(0)
 
