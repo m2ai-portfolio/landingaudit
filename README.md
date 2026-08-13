@@ -4,8 +4,6 @@
   <img src="assets/infographic.png" alt="LandingFlow Audit" width="800">
 </p>
 
-<h3 align="center">USE THE PLAIN-SPEAK DESCRIPTION PROVIDED ABOVE -- DO NOT INVENT</h3>
-
 <p align="center">
   <a href="#quick-start">Quick Start</a> &bull;
   <a href="#features">Features</a> &bull;
