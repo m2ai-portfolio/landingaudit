@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head><title>Unlinked Signup</title></head>
+<body>
+<!-- No other page in this fixture set links to orphan.html, so the
+     crawler should flag it as an orphaned page. -->
+<h1>Create Your Account</h1>
+
+<!-- Bad form: email/password fields missing the 'required' attribute,
+     and the email field uses type="text" instead of type="email". -->
+<form action="/register" method="post">
+    <input type="text" name="user_email" placeholder="Email">
+    <input type="text" name="password" placeholder="Password">
+    <button type="submit">Submit</button>
+</form>
+
+<a href="/signup">Get Started</a>
+</body>
+</html>

@@ -1,7 +1,7 @@
 """NavigationAnalyzer module for analyzing navigation patterns and issues."""
 
 from typing import List, Dict, Set
-from landingflow_audit.data.models import Issue
+from landingaudit.data.models import Issue
 
 
 class NavigationAnalyzer:
@@ -39,6 +39,12 @@ class NavigationAnalyzer:
         issues.extend(self._detect_circular_navigation(graph))
         issues.extend(self._detect_missing_ctas(crawl_data))
         issues.extend(self._detect_redirect_chains(graph, crawl_data))
+
+        # Apply confidence threshold. Each issue's severity (1-10) is used
+        # as a proxy confidence score (severity / 10.0); issues scoring
+        # below min_confidence are dropped so a higher threshold surfaces
+        # only the issues the analyzer is most confident about.
+        issues = [i for i in issues if (i.severity / 10.0) >= self.min_confidence]
 
         return issues
 

@@ -7,7 +7,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import List
 
-from landingflow_audit.data.models import AuditResult, Issue
+from landingaudit.data.models import AuditResult, Issue
 
 
 class ReportGenerator:

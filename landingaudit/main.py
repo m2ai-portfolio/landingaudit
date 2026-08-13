@@ -1,30 +1,63 @@
-"""LandingFlow Audit - Main entry point for the SaaS landing page analysis tool."""
+"""LandingAudit - Main entry point for the SaaS landing page analysis tool."""
 
+import argparse
 import os
 import sys
-from landingflow_audit.core.crawler import PageCrawler
-from landingflow_audit.core.navigator import NavigationAnalyzer
-from landingflow_audit.core.reporter import ReportGenerator
-from landingflow_audit.data.models import AuditResult
+from landingaudit.core.crawler import PageCrawler
+from landingaudit.core.navigator import NavigationAnalyzer
+from landingaudit.core.reporter import ReportGenerator
+from landingaudit.data.models import AuditResult
+
+
+def parse_args():
+    """Parse command-line arguments.
+
+    Command-line flags take precedence over environment variables, which
+    take precedence over the built-in defaults.
+    """
+    parser = argparse.ArgumentParser(
+        prog="landingaudit",
+        description="Scan a folder of local HTML landing pages for navigation and conversion issues.",
+    )
+    parser.add_argument(
+        "--input",
+        dest="input_dir",
+        default=None,
+        help="Directory containing landing pages (default: $LF_DATA_DIR or ./landing_pages)",
+    )
+    parser.add_argument(
+        "--output",
+        dest="output_dir",
+        default=None,
+        help="Directory for generated reports (default: $LF_OUTPUT_DIR or ./reports)",
+    )
+    return parser.parse_args()
 
 
 def main():
-    """Main entry point for LandingFlow Audit.
+    """Main entry point for LandingAudit.
 
-    Reads configuration from environment variables and orchestrates the
-    audit process: crawling, analysis, and report generation.
+    Reads configuration from CLI flags and environment variables and
+    orchestrates the audit process: crawling, analysis, and report
+    generation. CLI flags override environment variables.
+
+    CLI Flags:
+        --input: Directory containing landing pages
+        --output: Directory for generated reports
 
     Environment Variables:
         LF_DATA_DIR: Directory containing landing pages (default: ./landing_pages)
         LF_OUTPUT_DIR: Directory for generated reports (default: ./reports)
         LF_MIN_CONFIDENCE: Minimum confidence threshold for issues (default: 0.7)
     """
-    # Read environment variables with defaults
-    data_dir = os.getenv("LF_DATA_DIR", "./landing_pages")
-    output_dir = os.getenv("LF_OUTPUT_DIR", "./reports")
+    args = parse_args()
+
+    # Read environment variables with defaults, then apply CLI overrides
+    data_dir = args.input_dir or os.getenv("LF_DATA_DIR", "./landing_pages")
+    output_dir = args.output_dir or os.getenv("LF_OUTPUT_DIR", "./reports")
     min_confidence = float(os.getenv("LF_MIN_CONFIDENCE", "0.7"))
 
-    print("LandingFlow Audit - Initializing...")
+    print("LandingAudit - Initializing...")
     print(f"Data directory: {data_dir}")
     print(f"Output directory: {output_dir}")
     print(f"Minimum confidence: {min_confidence}")
